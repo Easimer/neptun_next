@@ -107,7 +107,7 @@ static void process_kv(curl_callback_info* inf, const char* key, const char* val
 
 static size_t curl_callback(char* buffer, size_t size, size_t nmemb, curl_callback_info* inf) {
     size_t ret = nmemb;
-    int i = 0;
+    size_t i = 0;
     char c;
     char *key, *value;
 
@@ -134,7 +134,6 @@ static size_t curl_callback(char* buffer, size_t size, size_t nmemb, curl_callba
 ics open_ics(const char* URL) {
     __ics* ret = NULL;
     CURL* curl;
-    CURLcode res;
 
     curl = curl_easy_init();
     assert(curl);
@@ -178,6 +177,10 @@ bool next_ics_event(ics inst, ics_event* ev) {
             *ev = inst->cur->ev;
             inst->cur = inst->cur->next;
             ret = true;
+
+        } else {
+            // reset current ptr if we've reached end of list
+            inst->cur = inst->head;
         }
     }
     return ret;
