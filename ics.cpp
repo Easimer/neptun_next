@@ -142,8 +142,9 @@ ics open_ics(const char* URL) {
         cbinf.curl = curl;
         cbinf.head = cbinf.last = cbinf.cur = NULL;
         curl_easy_setopt(curl, CURLOPT_URL, URL);
-        curl_easy_setopt(curl, (CURLOPT_WRITEFUNCTION), curl_callback);
-        curl_easy_setopt(curl, (CURLOPT_WRITEDATA), &cbinf);
+        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, curl_callback);
+        curl_easy_setopt(curl, CURLOPT_WRITEDATA, &cbinf);
+        curl_easy_setopt(curl, CURLOPT_BUFFERSIZE, CURL_MAX_READ_SIZE);
         curl_easy_perform(curl);
         curl_easy_cleanup(curl);
 
