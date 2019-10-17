@@ -164,10 +164,9 @@ static void print_event_verbose(const ics_event* ev, bool ongoing) {
 //
 // Returns: value of ev_buf if such an event was found or NULL
 [[nodiscard]]
-static ics_event* get_next_event(ics_event* ev_buf, bool* ongoing, ics ics_inst) {
+static ics_event* get_next_event(ics_event* ev_buf, bool* ongoing, ics ics_inst, u64 curtime) {
     ics_event* ret = NULL;
     ics_event ev, ev_next;
-    u64 curtime = time(NULL);
     u64 time_next = (u64)-1;
     bool found_event = false;
 
@@ -220,10 +219,11 @@ static void status_bar(const cmdargs_t* args) {
     ics ics_inst;
     ics_event ev = {0};
     bool ongoing = false;
+    u64 curtime = time(NULL);
 
     ics_inst = open_ics_cfg_url();
     if(ics_inst) {
-        if(get_next_event(&ev, &ongoing, ics_inst)) {
+        if(get_next_event(&ev, &ongoing, ics_inst, curtime)) {
             print_event_short(&ev, ongoing);
         }
         close_ics(ics_inst);
@@ -234,10 +234,11 @@ static void verbose_mode(const cmdargs_t* args) {
     ics ics_inst;
     ics_event ev = {0};
     bool ongoing = false;
+    u64 curtime = time(NULL);
 
     ics_inst = open_ics_cfg_url();
     if(ics_inst) {
-        if(get_next_event(&ev, &ongoing, ics_inst)) {
+        if(get_next_event(&ev, &ongoing, ics_inst, curtime)) {
             print_event_verbose(&ev, ongoing);
         }
         close_ics(ics_inst);
