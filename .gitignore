@@ -1,3 +1,4 @@
 *.o
 neptun_next
 *.swp
+tests/run_tests

@@ -15,3 +15,23 @@ If you don't want neptun_next to do a HTTP request every second then you can use
 ics_url = file:///home/user/.cache/neptun_next.ics
 ```
 
+### Building
+The only requirements to build are make and the development libraries for cURL.
+However if you want to build and run the tests you will need to install check/libcheck.
+
+To build the main executable, simply run
+```
+make
+```
+
+To build the tests and run them:
+```
+make BUILD_TESTS=1
+```
+
+To run the tests:
+```
+make test
+OR
+tests/run_tests
+```
