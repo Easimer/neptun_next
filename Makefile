@@ -26,4 +26,4 @@ clean:
 	rm -f $(OBJECTS) neptun_next
 	$(MAKE) -C tests clean
 
-.PHONY: clean test
+.PHONY: clean test tests/run_tests
