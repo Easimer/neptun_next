@@ -24,7 +24,7 @@ To build the main executable, simply run
 make
 ```
 
-To build the tests and run them:
+To only build the tests:
 ```
 make BUILD_TESTS=1
 ```
