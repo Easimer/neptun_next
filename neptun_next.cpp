@@ -7,10 +7,7 @@
 #include "platform.h"
 #include "ics.h"
 #include "ini_config.h"
-
-struct cmdargs_t {
-    bool status_bar = false; // -s
-};
+#include "neptun_next.h"
 
 static ini_config cfg = NULL;
 
@@ -18,7 +15,7 @@ static ini_config cfg = NULL;
 // Function: load_cfg
 // Load the configuration file
 //
-static void load_cfg() {
+void load_cfg() {
     char* path = NULL;
     int path_len = 0;
     const char* homedir = getenv("HOME");
@@ -35,7 +32,7 @@ static void load_cfg() {
 // Function: unload_cfg
 // Unload the configuration file
 //
-static void unload_cfg() {
+void unload_cfg() {
     if(cfg) {
         close_ini_config(cfg);
     }
@@ -164,7 +161,7 @@ static void print_event_verbose(const ics_event* ev, bool ongoing) {
 //
 // Returns: value of ev_buf if such an event was found or NULL
 [[nodiscard]]
-static ics_event* get_next_event(ics_event* ev_buf, bool* ongoing, ics ics_inst, u64 curtime) {
+ics_event* get_next_event(ics_event* ev_buf, bool* ongoing, ics ics_inst, u64 curtime) {
     ics_event* ret = NULL;
     ics_event ev, ev_next;
     u64 time_next = (u64)-1;
@@ -203,19 +200,7 @@ static ics_event* get_next_event(ics_event* ev_buf, bool* ongoing, ics ics_inst,
     return ret;
 }
 
-static void parse_cmdline(cmdargs_t* args, int argc, char** argv) {
-    for(int i = 1; i < argc; i++) {
-        if(argv[i][0] == '-') {
-            switch(argv[i][1]) {
-                case 's':
-                    args->status_bar = true;
-                    break;
-            }
-        }
-    }
-}
-
-static void status_bar(const cmdargs_t* args) {
+void status_bar(const cmdargs_t* args) {
     ics ics_inst;
     ics_event ev = {0};
     bool ongoing = false;
@@ -230,7 +215,7 @@ static void status_bar(const cmdargs_t* args) {
     }
 }
 
-static void verbose_mode(const cmdargs_t* args) {
+void verbose_mode(const cmdargs_t* args) {
     ics ics_inst;
     ics_event ev = {0};
     bool ongoing = false;
@@ -243,21 +228,4 @@ static void verbose_mode(const cmdargs_t* args) {
         }
         close_ics(ics_inst);
     }
-}
-
-int main(int argc, char** argv) {
-    cmdargs_t args;
-    load_cfg();
-
-    parse_cmdline(&args, argc, argv);
-
-    if(args.status_bar) {
-        status_bar(&args);
-    } else {
-        verbose_mode(&args);
-    }
-
-    unload_cfg();
-
-    return 0;
 }
