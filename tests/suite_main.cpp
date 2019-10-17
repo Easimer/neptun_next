@@ -103,12 +103,8 @@ START_TEST(test_ongoing_event_first_after_last_second)
 
     res = get_next_event(&ev, &ongoing, file, curtime);
 
-    ck_assert(res);
-    ck_assert_int_eq(ev.date_start, 60 * 60);
-    ck_assert_int_eq(ev.date_end, 60 * 60 + 30 * 60);
-    ck_assert(!ongoing);
-    ck_assert_str_eq(ev.name, "Event1");
-    ck_assert_str_eq(ev.location, "Location1");
+    // Shouldn't find an event
+    ck_assert(!res);
 
     close_ics(file);
 }

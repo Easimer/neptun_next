@@ -170,26 +170,30 @@ ics_event* get_next_event(ics_event* ev_buf, bool* ongoing, ics ics_inst, u64 cu
     assert(ics_inst);
     assert(ongoing);
 
-    while(next_ics_event(ics_inst, &ev)) {
-        if(ev.date_end > curtime) {
-            if(ev.date_start <= curtime) {
-                // event is ongoing
+    // Iterate over events in the ICS file. Iteration stops when we reached the
+    // end of the calendar or if we found out that one of the events is
+    // currently ongoing.
+    while(next_ics_event(ics_inst, &ev) && !(*ongoing)) {
+        // Interval: [date_start; date_end[
+        // Case 1: event is in the future
+        if(ev.date_start > curtime && ev.date_end > curtime) {
+            if(ev.date_start < time_next) {
+                time_next = ev.date_start;
                 ev_next = ev;
-                curtime = ev.date_start;
-                *ongoing = true;
                 found_event = true;
-            } else {
-                // event is coming up
-                if(ev.date_start < time_next) {
-                    time_next = ev.date_start;
-                    ev_next = ev;
-                    found_event = true;
-                }
             }
         }
-        if(ev.date_end >= curtime && ev.date_start < ev_next.date_start) {
+        // Case 2: event is ongoing
+        else if(ev.date_start <= curtime && ev.date_end > curtime) {
             ev_next = ev;
+            time_next = ev.date_start;
+            curtime = ev.date_start;
+            *ongoing = true;
             found_event = true;
+        }
+        // Case 3: event is in the past
+        else if(ev.date_start <= curtime && ev.date_end <= curtime) {
+            // Ignore
         }
     }
     if(found_event) {
