@@ -105,6 +105,7 @@ static void process_kv(curl_callback_info* inf, const char* key, const char* val
     }
 }
 
+
 static size_t curl_callback(char* buffer, size_t size, size_t nmemb, curl_callback_info* inf) {
     size_t ret = nmemb;
     size_t i = 0;
@@ -151,7 +152,9 @@ ics open_ics(const char* URL) {
         ret = new __ics;
         assert(ret);
         ret->head = ret->cur = cbinf.head;
-    } 
+    } else {
+        fprintf(stderr, "Failed to load ICS file from URL '%s'\n", URL);
+    }
 
     return ret;
 }
@@ -173,12 +176,13 @@ void close_ics(ics instance) {
 
 bool next_ics_event(ics inst, ics_event* ev) {
     bool ret = false;
+    assert(inst);
+    assert(ev);
     if(inst && ev) {
         if(inst->cur) {
             *ev = inst->cur->ev;
             inst->cur = inst->cur->next;
             ret = true;
-
         } else {
             // reset current ptr if we've reached end of list
             inst->cur = inst->head;

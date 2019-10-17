@@ -167,7 +167,6 @@ ics_event* get_next_event(ics_event* ev_buf, bool* ongoing, ics ics_inst, u64 cu
     u64 time_next = (u64)-1;
     bool found_event = false;
 
-    assert(cfg);
     assert(ics_inst);
     assert(ongoing);
 
