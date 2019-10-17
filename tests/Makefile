@@ -1,7 +1,7 @@
 CXXFLAGS=`pkg-config --cflags check` -I ../ -DNN__PWD="`pwd`"
 LDFLAGS=`pkg-config --libs check` -lcurl
 MAIN=main.o
-SUITES=suite_main.o
+SUITES=suite_main.o suite_ini.o
 MODULES=../neptun_next.o ../ics.o ../hash.o ../ini_config.o
 RUN_TESTS=run_tests
 

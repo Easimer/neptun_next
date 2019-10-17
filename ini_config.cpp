@@ -90,6 +90,10 @@ bool get_ini_config_str(ini_config cfg, const char* key, const char** value) {
     bool ret = false;
     u64 H = hash(key, strlen(key));
     ini_config cur = cfg;
+
+    if(value) {
+        *value = NULL;
+    }
     
     while(cur && !ret) {
         if(cur->H == H) {
