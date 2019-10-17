@@ -16,6 +16,19 @@ struct __ini_config {
     const char* value;
 };
 
+static ini_config is_key_present(ini_config head, u64 H) {
+    ini_config ret = NULL;
+
+    while(head) {
+        if(head->H == H) {
+            ret = head;
+        }
+        head = head->next;
+    }
+
+    return ret;
+}
+
 static int read_line(FILE* f, char* buf, int bufsiz) {
     int i = 0;
     do {
@@ -44,7 +57,7 @@ static void split_line(char* buf, int bufsiz, char** key, char** value) {
 
 ini_config open_ini_config(const char* path) {
     ini_config ret = NULL;
-    ini_config cur = NULL;
+    ini_config tail = NULL;
     FILE* f;
     char buf_line[512];
     
@@ -57,15 +70,26 @@ ini_config open_ini_config(const char* path) {
                 if(read_line(f, buf_line, 512)) {
                     split_line(buf_line, 512, &key, &value);
                     vlen = strlen(value);
-                    if (ret) {
-                        cur = (cur->next = new __ini_config);
+                    u64 H = hash(key, strlen(key));
+                    ini_config cur;
+                    cur = is_key_present(ret, H);
+                    if(cur) {
+                        // Overwrite old entry
+                        delete[] cur->value;
+                        cur->value = new char[vlen + 1];
+                        memcpy((char*)cur->value, value, vlen + 1);
                     } else {
-                        cur = ret = new __ini_config;
+                        // Append new entry
+                        if (ret) {
+                            cur = tail = (tail->next = new __ini_config);
+                        } else {
+                            cur = tail = ret = new __ini_config;
+                        }
+                        cur->H = H;
+                        cur->value = new char[vlen + 1];
+                        cur->next = NULL;
+                        memcpy((char*)cur->value, value, vlen + 1);
                     }
-                    cur->H = hash(key, strlen(key));
-                    cur->next = NULL;
-                    cur->value = new char[vlen + 1];
-                    memcpy((char*)cur->value, value, vlen + 1);
                 }
             }
             fclose(f);
